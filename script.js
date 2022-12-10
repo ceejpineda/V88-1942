@@ -1,6 +1,7 @@
 const spaceGame = (() =>{
 
-    const speed = 5;
+    let speed = 5;
+    let bulletSpeed = 10;
     const mainGame = document.querySelector('.mainGame');
     const divPos = mainGame.getBoundingClientRect();
     const controlKeys = {
@@ -10,6 +11,10 @@ const spaceGame = (() =>{
         'ArrowDown':false,
         ' ': false,
     }
+
+    const enemy = document.createElement('div');
+    enemy.classList.add('enemy');
+    mainGame.append(enemy);
 
     const spawn = () =>{
         const ship = document.createElement('div');
@@ -50,13 +55,32 @@ const spaceGame = (() =>{
 
     const bulletMovement = () =>{
         const bullets = document.querySelectorAll('.bullet');
-        console.log(bullets);
+        const enemies = document.querySelector('.enemy');
+        let enemyPos;
+        if(enemies != null){
+            enemyPos = enemies.getBoundingClientRect();
+        }
 
         bullets.forEach(bullet => {
-            bullet.getBoundingClientRect();
-            console.log(bullet.top)
-            bullet.style.top = bullet.top - 10 + 'px';
+            let bulletPos = bullet.getBoundingClientRect();
+            if(bulletPos.top < divPos.top){
+                bullet.remove();
+            }
+            else if(Math.abs(bulletPos.left+15 - enemyPos.left) < 50 && Math.abs(bulletPos.top - enemyPos.top)<15){
+                enemies.remove();
+                explode(enemyPos.left+15, enemyPos.top+15);
+                bullet.remove();
+            }
+            bullet.style.top = bulletPos.top - bulletSpeed + 'px';
         });
+    }
+
+    const explode = (x, y) =>{
+        const explosion = document.createElement('div');
+        explosion.classList.add('explode');
+        explosion.style.left = x + 'px';
+        explosion.style.top = x + 'px';
+        mainGame.appendChild(explosion);
     }
 
     const controls = () =>{
@@ -107,6 +131,6 @@ const spaceGame = (() =>{
 spaceGame.spawn();
 spaceGame.controls();
 
-setInterval(spaceGame.movement, 50)
-setInterval(spaceGame.bulletMovement, 50)
+setInterval(spaceGame.movement, 16)
+setInterval(spaceGame.bulletMovement, 16)
 
