@@ -1,0 +1,48 @@
+*, *::before, *::after{
+    padding: 0;
+    margin: 0;
+}
+
+body{
+    background-color: #121212;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+}
+.header{
+    color: white
+}
+.mainGame{
+    width: 720px;
+    height: 720px;
+    outline: 5px solid white;
+    background-image: url('./assets/2.gif');
+    background-size: cover;
+}
+.round2{
+    background-image: url('./assets/2.gif');
+}
+.spaceShip{
+    position: absolute;
+    background-image: url('./assets/spaceshipsprites.gif');
+    background-position: 75px 0px;
+    width: 35px;
+    height: 35px;
+    transition: all 20ms ease-in-out;
+    -webkit-transition: all 20ms ease-out;
+}
+.left{
+    background-position: 0px 0px;
+}
+.right{
+    background-position: 34px 0px;
+}
+.bullet{
+    background-image: url('./assets/bullet.png');
+    position: absolute;
+    width: 12px;
+    height: 12px;
+}
