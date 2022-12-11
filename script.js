@@ -2,6 +2,7 @@ const spaceGame = (() =>{
 
     let speed = 5;
     let bulletSpeed = 10;
+    let score = 0;
     const mainGame = document.querySelector('.mainGame');
     const divPos = mainGame.getBoundingClientRect();
     let isGameStart = false;
@@ -19,7 +20,7 @@ const spaceGame = (() =>{
     gunSound.src = './assets/gun.wav'
     gunSound.preload = 'auto';
     const theme = document.getElementById('theme');
-    //theme.play();
+    const scoreCon = document.getElementById('score');
 
     const spawn = () =>{
         if(!isGameStart) return;
@@ -37,7 +38,11 @@ const spaceGame = (() =>{
         for(let i=0; i<7; i++){
             const enemy = document.createElement('div');
             enemy.style.position = 'absolute';
+            let rand = Math.floor(Math.random()*2);
             enemy.classList.add('enemy');
+            if(rand == 1){
+                enemy.classList.add('enemy2');
+            }
             enemy.style.top = divPos.top + 'px';
             enemy.style.left = Math.floor(Math.random()*(divPos.right-divPos.left)*0.9)+ divPos.left + 30 + 'px';
             mainGame.append(enemy);
@@ -89,6 +94,7 @@ const spaceGame = (() =>{
     const bulletMovement = () =>{
         if(!isGameStart) return;
 
+        scoreCon.innerHTML = score;
         const bullets = document.querySelectorAll('.bullet');
 
         bullets.forEach(bullet => {
@@ -114,6 +120,7 @@ const spaceGame = (() =>{
             enemies.forEach(enemy => {
                 let enemyPos = enemy.getBoundingClientRect();
                 if(Math.abs(bulletPos.left - enemyPos.left) < 30 && Math.abs(bulletPos.top - enemyPos.top) < 20){
+                    score += 10;
                     explodeSound.play();
                     explode(enemyPos.left, enemyPos.top);
                     enemy.remove();
@@ -191,15 +198,23 @@ const spaceGame = (() =>{
 
     const changeBG = () => {
         if(!isGameStart) return;
-
-        if(mainGame.classList.contains('round2')){
+        if(mainGame.classList.contains('round1')){
+            mainGame.classList.add('round2');
+            mainGame.classList.remove('round1')
+        }
+        else if(mainGame.classList.contains('round2')){
             mainGame.classList.add('round3');
+            mainGame.classList.remove('round2')
         }
-        if(mainGame.classList.contains('round3')){
+        else if(mainGame.classList.contains('round3')){
             mainGame.classList.add('round4');
+            mainGame.classList.remove('round3')
+
         }
-        if(mainGame.classList.contains('round4')){
+        else if(mainGame.classList.contains('round4')){
             mainGame.classList.add('round5');
+            mainGame.classList.remove('round4')
+
         }
     }
 
