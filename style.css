@@ -1,9 +1,15 @@
+@font-face {
+    font-family: PixeBoy;
+    src: url(./assets/PixeBoy.ttf);
+}
 *, *::before, *::after{
     padding: 0;
     margin: 0;
 }
 
 body{
+    font-family: 'Pixeboy';
+    font-size: xx-large;
     background-color: #121212;
     display: flex;
     flex-direction: column;
@@ -13,18 +19,39 @@ body{
     height: 100vh;
 }
 .header{
-    color: white
+    color: white;
+    opacity: 0;
+    transition: opacity 1s ease-in;
 }
 .mainGame{
+    font-family: 'Pixeboy';
+    font-size: x-large;
+    display: flex;
+    flex-direction: column;
     width: 720px;
     height: 720px;
     outline: 5px solid white;
-    background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url("./assets/2.gif");
+    color: white;
     background-size: cover;
+    transition: background-image 1s ease-in;
+    
+}
+.round1{
+    background-image: url("./assets/2a.gif");
 }
 .round2{
-    background-image: url('./assets/2.gif');
+    background-image: url('./assets/3a.gif');
 }
+.round3{
+    background-image: url('./assets/4a.gif');
+}
+.round4{
+    background-image: url('./assets/1a.gif');
+}
+.round5{
+    background-image: url('./assets/1a.gif');
+}
+
 .spaceShip{
     position: absolute;
     background-image: url('./assets/spaceshipsprites.gif');
@@ -48,14 +75,55 @@ body{
     height: 12px;
 }
 .enemy{
-    background-image: url('./assets/enemy.png');
-    width: 50px;
-    height: 50px;
+    background-image: url('./assets/enemy1.png');
+    width: 40px;
+    height: 40px;
     background-size: cover;
 }
 .explode{
     background-image: url('./assets/explode.gif');
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
     background-size: cover;
+}
+.menu{
+    display: flex;
+    align-self: center;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    height: 720px;
+    width: 720px;
+}
+.score{
+    font-size: 30px;
+    padding: 10px;
+    display: flex;
+    align-items: flex-start;
+    opacity: 0;
+    transition: opacity 1s ease-in;
+}
+#start{
+    background-color: white;
+    border: 2px solid black;
+    font-family: 'PixeBoy';
+    font-size: 30px;
+    padding: 5px;
+}
+#start:hover{
+    cursor: pointer;
+    background-color: rgb(105, 0, 0);
+    color: white;
+}
+.blink{
+    animation: blinker 0.5s linear infinite;
+}
+.show{
+    opacity: 1;
+}
+@keyframes blinker {
+    50%{
+        opacity: 0;
+    }
 }

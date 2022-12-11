@@ -4,6 +4,7 @@ const spaceGame = (() =>{
     let bulletSpeed = 10;
     const mainGame = document.querySelector('.mainGame');
     const divPos = mainGame.getBoundingClientRect();
+    let isGameStart = false;
     const controlKeys = {
         'ArrowRight':false,
         'ArrowLeft':false,
@@ -11,12 +12,17 @@ const spaceGame = (() =>{
         'ArrowDown':false,
         ' ': false,
     }
-
-    const enemy = document.createElement('div');
-    enemy.classList.add('enemy');
-    mainGame.append(enemy);
+    const explodeSound = new Audio();
+    explodeSound.src = './assets/explodeSound.wav';
+    explodeSound.preload = 'auto';
+    const gunSound = new Audio();
+    gunSound.src = './assets/gun.wav'
+    gunSound.preload = 'auto';
+    const theme = document.getElementById('theme');
+    //theme.play();
 
     const spawn = () =>{
+        if(!isGameStart) return;
         const ship = document.createElement('div');
         ship.classList.add('spaceShip');
         mainGame.append(ship);
@@ -24,7 +30,34 @@ const spaceGame = (() =>{
         ship.style.top = divPos.top + (divPos.bottom - divPos.top)/1.2 + 'px'
     }
 
+    const spawnEnemies = () =>{
+        if(!isGameStart) return;
+        const enemies = document.querySelectorAll('.enemy');
+        if(enemies.length != 0) return;
+        for(let i=0; i<7; i++){
+            const enemy = document.createElement('div');
+            enemy.style.position = 'absolute';
+            enemy.classList.add('enemy');
+            enemy.style.top = divPos.top + 'px';
+            enemy.style.left = Math.floor(Math.random()*(divPos.right-divPos.left)*0.9)+ divPos.left + 30 + 'px';
+            mainGame.append(enemy);
+        }
+    }
+
+    const enemyMovement = () =>{
+        if(!isGameStart) return;
+        const enemies = document.querySelectorAll('.enemy');
+        enemies.forEach(enemy => {
+            let pos = enemy.getBoundingClientRect();
+            if(pos.top > divPos.bottom - 40){
+                enemy.remove();
+            }
+            enemy.style.top = pos.top + 1 + 'px';
+        });
+    }
+
     const movement = () =>{
+        if(!isGameStart) return;
         const ship = document.querySelector('.spaceShip')
         let shipPos = ship.getBoundingClientRect();
         let left = shipPos.left;
@@ -54,36 +87,63 @@ const spaceGame = (() =>{
     }
 
     const bulletMovement = () =>{
+        if(!isGameStart) return;
+
         const bullets = document.querySelectorAll('.bullet');
-        const enemies = document.querySelector('.enemy');
-        let enemyPos;
-        if(enemies != null){
-            enemyPos = enemies.getBoundingClientRect();
-        }
 
         bullets.forEach(bullet => {
             let bulletPos = bullet.getBoundingClientRect();
-            if(bulletPos.top < divPos.top){
-                bullet.remove();
-            }
-            else if(Math.abs(bulletPos.left+15 - enemyPos.left) < 50 && Math.abs(bulletPos.top - enemyPos.top)<15){
-                enemies.remove();
-                explode(enemyPos.left+15, enemyPos.top+15);
-                bullet.remove();
-            }
             bullet.style.top = bulletPos.top - bulletSpeed + 'px';
+            checkBulletHit();
+            if(parseInt(bullet.style.top) < divPos.top){
+                bullet.remove();
+            }
+            
+        });
+    }
+
+    const checkBulletHit = () =>{
+        if(!isGameStart) return;
+
+        const bullets = document.querySelectorAll('.bullet');
+        const enemies = document.querySelectorAll('.enemy');
+
+        bullets.forEach(bullet => {
+            let bulletPos = bullet.getBoundingClientRect();
+            
+            enemies.forEach(enemy => {
+                let enemyPos = enemy.getBoundingClientRect();
+                if(Math.abs(bulletPos.left - enemyPos.left) < 30 && Math.abs(bulletPos.top - enemyPos.top) < 20){
+                    explodeSound.play();
+                    explode(enemyPos.left, enemyPos.top);
+                    enemy.remove();
+                    bullet.remove();
+                }
+            });
+
         });
     }
 
     const explode = (x, y) =>{
+        if(!isGameStart) return;
+
         const explosion = document.createElement('div');
         explosion.classList.add('explode');
+        explosion.style.position = 'absolute'
         explosion.style.left = x + 'px';
-        explosion.style.top = x + 'px';
+        explosion.style.top = y + 'px';
         mainGame.appendChild(explosion);
+        setTimeout(explodeRemove, 500);
+    }
+
+    const explodeRemove = () =>{
+        const explode = document.querySelector('.explode')
+        explode.remove();
     }
 
     const controls = () =>{
+        if(!isGameStart) return;
+
         document.addEventListener('keydown', (e)=>{
             if(e.key == "ArrowRight"){
                 controlKeys["ArrowRight"] = true;
@@ -95,6 +155,9 @@ const spaceGame = (() =>{
                 controlKeys["ArrowUp"] = true;
             }if (e.key == " "){
                 controlKeys[" "] = true;
+                const gun = gunSound.cloneNode();
+                gun.play();
+                gun.remove();
             }
         })
         document.addEventListener('keyup', (e)=>{
@@ -116,6 +179,8 @@ const spaceGame = (() =>{
     }
 
     const shoot = () =>{
+        if(!isGameStart) return;
+
         const ship = document.querySelector('.spaceShip').getBoundingClientRect();
         const bullet = document.createElement('div');
         bullet.classList.add('bullet');
@@ -124,13 +189,48 @@ const spaceGame = (() =>{
         mainGame.append(bullet);
     }
 
-    return {spawn, controls, movement, bulletMovement}
+    const changeBG = () => {
+        if(!isGameStart) return;
+
+        if(mainGame.classList.contains('round2')){
+            mainGame.classList.add('round3');
+        }
+        if(mainGame.classList.contains('round3')){
+            mainGame.classList.add('round4');
+        }
+        if(mainGame.classList.contains('round4')){
+            mainGame.classList.add('round5');
+        }
+    }
+
+    const startGame = () =>{
+        const menu = document.querySelector('.menu')
+        const startButton = document.getElementById('start');
+        const header = document.querySelector('.header');
+        const scoreDiv = document.querySelector('.score');
+
+
+        startButton.addEventListener('click', ()=>{
+            menu.style.display = 'none';
+            header.classList.add('show');
+            scoreDiv.classList.add('show'); 
+            isGameStart = true;
+            spaceGame.spawn();
+            spaceGame.controls();
+            theme.play();
+        })
+    }
+
+    return {spawn, controls, movement, bulletMovement,spawnEnemies, enemyMovement, changeBG, startGame}
 
 })();
 
-spaceGame.spawn();
-spaceGame.controls();
+spaceGame.startGame();
 
-setInterval(spaceGame.movement, 16)
-setInterval(spaceGame.bulletMovement, 16)
+setInterval(spaceGame.movement, 16);
+setInterval(spaceGame.bulletMovement, 16);
+setInterval(spaceGame.enemyMovement, 16);
+setInterval(spaceGame.changeBG, 10000);
+spaceGame.spawnEnemies();
+setInterval(spaceGame.spawnEnemies, 2000);
 

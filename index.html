@@ -9,11 +9,21 @@
     <title>1942 - Space Edition</title>
 </head>
 <body>
+    <audio src="./assets/space.mp3" preload="auto" id="theme" loop="loop"></audio>
     <div class="header">
         <h1>1942 - Space Edition</h1>
     </div>
     <div class="mainContent">
-        <div class="mainGame"></div>
+        <div class="mainGame round1">
+            <div class="score">
+                <p>Score: <span id="score"></span></p>
+            </div>
+            <div class="menu">
+                <h1>1942 - Space Edition</h1>
+                <p class="blink">Insert Coin</p>
+                <button id="start">Start</button>
+            </div>
+        </div>
     </div>
     <div class="footer"></div>
 </body>
