@@ -209,7 +209,6 @@ class SpaceGame {
     }
 
     checkBulletHit(){
-        //if(!this.isGameStart) return;
 
         const bullets = document.querySelectorAll('.bullet');
         const enemies = document.querySelectorAll('.enemy');
